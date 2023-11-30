@@ -52,12 +52,12 @@ public class Crud {
         Connection connection = null;
         System.out.println("Enter The Count of The Employees");
         int emp_count = scanner.nextInt();
-        int count = 0;
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
              connection = DriverManager.getConnection(dbUrl,userName,password);
             PreparedStatement preparedStatement = connection.prepareStatement("insert into emp_table values(?,?,?,?)");
             for (int i = 1; i<=emp_count;i++){
+                System.out.println("Add Employee "+i);
                 System.out.println("Enter Employee Id");
                 int emp_id = scanner.nextInt();
                 System.out.println("Enter Employee Name");
@@ -66,9 +66,7 @@ public class Crud {
                 int emp_sal = scanner.nextInt();
                 System.out.println("Enter The Location");
                 String emp_location = scanner.next();
-                System.out.println("Employee "+count+" is Added\n");
-                count+=1;
-                System.out.println("Add Employee "+count);
+                System.out.println("Employee "+i+" is Added\n");
                 preparedStatement.setInt(1,emp_id);
                 preparedStatement.setString(2,emp_name);
                 preparedStatement.setInt(3,emp_sal);
@@ -76,7 +74,9 @@ public class Crud {
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
-            System.out.println("Employees Added");
+            if (emp_count > 1) {
+                System.out.println(emp_count+" Employees Added");
+            }
         } catch (ClassNotFoundException exception){
             System.out.println(exception);
         }catch (SQLException exception){
