@@ -34,7 +34,8 @@ public class Crud {
             prepareStatement.executeUpdate();
             System.out.println("Employee Created...!");
         } catch (SQLException exception) {
-            System.out.println(exception);
+            System.out.println("Employee id Already Exists Try Again..!");
+            //System.out.println(exception);
         } catch (InterruptedException exception) {
             System.out.println(exception);
         } catch (ClassNotFoundException exception) {
@@ -80,7 +81,8 @@ public class Crud {
         } catch (ClassNotFoundException exception){
             System.out.println(exception);
         }catch (SQLException exception){
-            System.out.println(exception);
+            System.out.println("Employee id Already Exists");
+            //System.out.println(exception);
         }finally {
             try{
                 connection.close();
@@ -109,28 +111,44 @@ public class Crud {
 
     }
 
-    public static void fetchEmployeeWithId() throws ClassNotFoundException, SQLException, InterruptedException {
-        System.out.println("Enter ID");
-        int empId = scanner.nextInt();
-        System.out.println("Fetching Employee...Wait");
-        Thread.sleep(1500);
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection(dbUrl, userName, password);
-        PreparedStatement prepareStatement = connection.prepareStatement("select * from emp_table where id =?");
-        prepareStatement.setInt(1, empId);
-
-
-        ResultSet resultSet = prepareStatement.executeQuery();
-
-
-        while (resultSet.next()) {
-            System.out.println("\n-------> Employee Details <-------\n");
-            System.out.println("Id : " + resultSet.getInt(1));
-            System.out.println("Name : " + resultSet.getString("ename"));
-            System.out.println("Salary : " + resultSet.getInt("sal"));
-            System.out.println("Location : " + resultSet.getString("location"));
-            System.out.println("-----------------------");
+    public static void fetchEmployeeWithId(){
+        Connection connection = null;
+        try {
+            System.out.println("Enter ID");
+            int empId = scanner.nextInt();
+            System.out.println("Fetching Employee...Wait");
+            Thread.sleep(1500);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+             connection = DriverManager.getConnection(dbUrl, userName, password);
+            PreparedStatement prepareStatement = connection.prepareStatement("select * from emp_table where id =?");
+            prepareStatement.setInt(1, empId);
+            ResultSet resultSet = prepareStatement.executeQuery();
+            resultSet.next();
+            int rowCount = resultSet.getInt(1);
+            System.out.println(rowCount);
+            while (resultSet.next()) {
+                System.out.println("\n-------> Employee Details <-------\n");
+                System.out.println("Id : " + resultSet.getInt(1));
+                System.out.println("Name : " + resultSet.getString("ename"));
+                System.out.println("Salary : " + resultSet.getInt("sal"));
+                System.out.println("Location : " + resultSet.getString("location"));
+                System.out.println("-----------------------");
+            }
+        } catch (SQLException exception) {
+            System.out.println("----> No Record Found <----");
+           // System.out.println(exception);
+        } catch (InterruptedException exception) {
+            System.out.println(exception);
+        } catch (ClassNotFoundException exception) {
+            System.out.println(exception);
+        }   finally {
+            try {
+                connection.close();
+            } catch (SQLException exception) {
+                System.out.println(exception);
+            }
         }
+
     }
 
     public static void updateEmpName() throws ClassNotFoundException, SQLException, InterruptedException {
@@ -145,8 +163,15 @@ public class Crud {
         PreparedStatement prepareStatement = connection.prepareStatement("update emp_table set ename =? where id =?");
         prepareStatement.setString(1, emp_new_name);
         prepareStatement.setInt(2, emp_id);
-        prepareStatement.executeUpdate();
-        System.out.println("Employee Name Updated..!");
+        int rowsAffected= prepareStatement.executeUpdate();
+        if (rowsAffected==0){
+            System.out.println("Record Not Found");
+            prepareStatement.close();
+        }else {
+            System.out.println("Employee Name Updated..!");
+            connection.close();
+        }
+
     }
 
     public static void updateEmpSalary() throws ClassNotFoundException, SQLException, InterruptedException {
@@ -161,8 +186,14 @@ public class Crud {
         PreparedStatement prepareStatement = connection.prepareStatement("update emp_table set sal =? where id =?");
         prepareStatement.setInt(1, emp_new_sal);
         prepareStatement.setInt(2, emp_id);
-        prepareStatement.executeUpdate();
-        System.out.println("Salary Updated..!");
+        int rowsAffected  = prepareStatement.executeUpdate();
+        if (rowsAffected==0){
+            System.out.println("Record Not Found");
+            prepareStatement.close();
+        }else {
+            System.out.println("Salary Updated..!");
+            connection.close();
+        }
     }
 
     public static void updateEmpLocation() throws ClassNotFoundException, SQLException, InterruptedException {
@@ -177,8 +208,14 @@ public class Crud {
         PreparedStatement prepareStatement = connection.prepareStatement("update emp_table set location =? where id =?");
         prepareStatement.setString(1, emp_new_location);
         prepareStatement.setInt(2, emp_id);
-        prepareStatement.executeUpdate();
-        System.out.println("Employee Location Updated..!");
+       int rowsAffected = prepareStatement.executeUpdate();
+       if (rowsAffected==0){
+           System.out.println("Record Not Found");
+           prepareStatement.close();
+       }else {
+           System.out.println("Employee Location Updated..!");
+           connection.close();
+       }
     }
 
     public static void deleteEmployee() throws ClassNotFoundException, SQLException, InterruptedException {
@@ -190,7 +227,13 @@ public class Crud {
         Connection connection = DriverManager.getConnection(dbUrl, userName, password);
         PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery);
         preparedStatement.setInt(1, emp_id);
-        preparedStatement.executeUpdate();
-        System.out.println("Employee Deleted...!");
+       int rowsAffected = preparedStatement.executeUpdate();
+       if (rowsAffected==0){
+           System.out.println("Record Not Found");
+           preparedStatement.close();
+       }else {
+           System.out.println("Employee Deleted...!");
+           connection.close();
+       }
     }
 }
