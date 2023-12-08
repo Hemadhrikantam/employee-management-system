@@ -25,6 +25,9 @@ public class CrudDriver extends Crud {
                         case 2 ->{
                             createMultipleEmployees();
                         }
+                        default -> {
+                            System.out.println("Input MissMatching");
+                        }
                     }
 
                 }
@@ -39,6 +42,9 @@ public class CrudDriver extends Crud {
                         }
                         case 2 -> {
                             fetchEmployeeWithId();
+                        }
+                        default -> {
+                            System.out.println("Input MissMatching");
                         }
                     }
 
@@ -58,6 +64,9 @@ public class CrudDriver extends Crud {
                         }
                         case 3 -> {
                             updateEmpLocation();
+                        }
+                        default -> {
+                            System.out.println("Input MissMatching");
                         }
                     }
                 }
