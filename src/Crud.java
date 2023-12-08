@@ -7,8 +7,9 @@ public class Crud {
     static final String userName = "root";
     static final String password = "Hemz@12345";
     static Scanner scanner = new Scanner(System.in);
-    static final String resultQuery = "select * from emp_table";
-    static final String deleteQuery = "delete from emp_table where id=?";
+    static final String resultQuery = "select * from emp_table where is_deleted =0";
+    static final String deleteQuery = "update emp_table set is_deleted=1 where id =?";
+    static  final  String isdeleted = "select * from emp_table where is_deleted =1";
 
 
     public static void createSingleEmployee() {
@@ -26,7 +27,7 @@ public class Crud {
             Thread.sleep(1000);
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(dbUrl, userName, password);
-            PreparedStatement prepareStatement = connection.prepareStatement("insert into emp_table values (?,?,?,?)");
+            PreparedStatement prepareStatement = connection.prepareStatement("insert into emp_table values (?,?,?,?,is_deleted=1)");
             prepareStatement.setInt(1, emp_id);
             prepareStatement.setString(2, emp_name);
             prepareStatement.setInt(3, sal);
@@ -34,8 +35,8 @@ public class Crud {
             prepareStatement.executeUpdate();
             System.out.println("Employee Created...!");
         } catch (SQLException exception) {
-            System.out.println("Employee id Already Exists Try Again..!");
-            //System.out.println(exception);
+           // System.out.println("Employee id Already Exists Try Again..!");
+            System.out.println(exception);
         } catch (InterruptedException exception) {
             System.out.println(exception);
         } catch (ClassNotFoundException exception) {
@@ -56,7 +57,7 @@ public class Crud {
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
              connection = DriverManager.getConnection(dbUrl,userName,password);
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into emp_table values(?,?,?,?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into emp_table values(?,?,?,?,is_deleted=1)");
             for (int i = 1; i<=emp_count;i++){
                 System.out.println("Add Employee "+i);
                 System.out.println("Enter Employee Id");
@@ -81,8 +82,8 @@ public class Crud {
         } catch (ClassNotFoundException exception){
             System.out.println(exception);
         }catch (SQLException exception){
-            System.out.println("Employee id Already Exists");
-            //System.out.println(exception);
+            //System.out.println("Employee id Already Exists");
+            System.out.println(exception);
         }finally {
             try{
                 connection.close();
@@ -235,5 +236,26 @@ public class Crud {
            System.out.println("Employee Deleted...!");
            connection.close();
        }
+    }
+    public static void deleteMultipleEmployees()throws ClassNotFoundException, SQLException, InterruptedException{
+
+    }
+
+    public  static  void fetchDeletedEmployees()throws ClassNotFoundException,SQLException,InterruptedException{
+        System.out.println("Fetching Deleted Employees...Wait...");
+        Thread.sleep(1000);
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection connection = DriverManager.getConnection(dbUrl,userName,password);
+        PreparedStatement preparedStatement= connection.prepareStatement(isdeleted);
+        ResultSet resultSet= preparedStatement.executeQuery();
+        while (resultSet.next()){
+            System.out.println("\n------->Deleted Employee " + resultSet.getInt(1) + " Details <-------\n");
+            System.out.println("Id : " + resultSet.getInt(1));
+            System.out.println("Name : " + resultSet.getString("ename"));
+            System.out.println("Salary : " + resultSet.getInt("sal"));
+            System.out.println("Location : " + resultSet.getString("location"));
+            System.out.println("---------------------");
+        }
+        connection.close();
     }
 }

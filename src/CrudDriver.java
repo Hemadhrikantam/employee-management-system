@@ -10,7 +10,8 @@ public class CrudDriver extends Crud {
             System.out.println("--> 2.View Employees <--");
             System.out.println("--> 3.Update Employee <--");
             System.out.println("--> 4.Delete Employee <--");
-            System.out.println("--> 5.Exit <-");
+            System.out.println("--> 5.View Deleted Employees <--");
+            System.out.println("--> 6.Exit <-");
             int userInput = scanner.nextInt();
             switch (userInput) {
                 case 1 -> {
@@ -61,9 +62,12 @@ public class CrudDriver extends Crud {
                     }
                 }
                 case 4 -> {
-                   deleteEmployee();
+                    deleteEmployee();
                 }
-                case 5 -> {
+                case 5 ->{
+                    fetchDeletedEmployees();
+                }
+                case 6 -> {
                     rep = false;
                     System.out.println("Visit Again...");
                 }
